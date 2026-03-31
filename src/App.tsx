@@ -42,7 +42,7 @@ export default function App() {
 
   useEffect(() => {
     if (!mode) {
-      document.title = "SoulBond - Deep Conversation & Relationship Game";
+      document.title = "LoveConnect - Deep Conversation & Relationship Game";
     } else {
       const modeNames = {
         casual: "Casual Mode",
@@ -50,7 +50,7 @@ export default function App() {
         versus: "Versus Mode",
         married: "Married Life Mode"
       };
-      document.title = `${modeNames[mode]} | SoulBond`;
+      document.title = `${modeNames[mode]} | LoveConnect`;
     }
   }, [mode]);
 
@@ -577,11 +577,11 @@ export default function App() {
             </p>
           </div>
           
-          <nav className="flex gap-8 text-[10px] uppercase tracking-[0.2em] font-bold">
-            <a href="#" className="hover:text-brand-pink transition-colors">About Us</a>
-            <a href="#" className="hover:text-brand-pink transition-colors">FAQ</a>
-            <a href="#" className="hover:text-brand-pink transition-colors">Contact</a>
-            <a href="#" className="hover:text-brand-pink transition-colors">Github</a>
+          <nav className="flex gap-8 text-[10px] uppercase tracking-[0.2em] font-bold" aria-label="Footer Navigation">
+            <a href="/" aria-label="About Us" className="hover:text-brand-pink transition-colors">About Us</a>
+            <a href="/" aria-label="Frequently Asked Questions" className="hover:text-brand-pink transition-colors">FAQ</a>
+            <a href="/" aria-label="Contact Us" className="hover:text-brand-pink transition-colors">Contact</a>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="Github Repository" className="hover:text-brand-pink transition-colors">Github</a>
           </nav>
         </footer>
       </main>
