@@ -46,7 +46,7 @@ export default function FAQ() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-serif italic mb-6">{t('faq.title')}</h2>
-          <p className="text-gray-400">{t('faq.subtitle')}</p>
+          <p className="text-ink-soft">{t('faq.subtitle')}</p>
         </motion.div>
 
         <div className="space-y-12">
@@ -62,15 +62,15 @@ export default function FAQ() {
                   return (
                     <motion.div 
                       key={id}
-                      className={`glass rounded-2xl md:rounded-[2rem] overflow-hidden border transition-colors ${isOpen ? 'border-brand-pink/30' : 'border-white/5'}`}
+                      className={`glass rounded-2xl md:rounded-[2rem] overflow-hidden border transition-colors ${isOpen ? 'border-brand-pink/30' : 'border-hairline/60'}`}
                       initial={false}
                     >
-                      <button 
+                      <button
                         onClick={() => toggle(id)}
-                        className="w-full p-6 text-left flex justify-between items-center gap-4 hover:bg-white/5 transition-colors"
+                        className="w-full p-6 text-left flex justify-between items-center gap-4 hover:bg-surface-soft transition-colors"
                       >
                         <span className="font-serif italic text-lg">{faq.q}</span>
-                        <div className={`w-8 h-8 rounded-full border border-white/10 flex items-center justify-center transition-transform duration-300 ${isOpen ? 'rotate-180 bg-brand-pink/10 text-brand-pink' : ''}`}>
+                        <div className={`w-8 h-8 rounded-full border border-hairline flex items-center justify-center transition-transform duration-300 ${isOpen ? 'rotate-180 bg-brand-pink/10 text-brand-pink' : ''}`}>
                           <ChevronDown size={18} />
                         </div>
                       </button>
@@ -82,7 +82,7 @@ export default function FAQ() {
                             exit={{ height: 0, opacity: 0 }}
                             transition={{ duration: 0.3, ease: "easeInOut" }}
                           >
-                            <div className="p-6 pt-0 text-gray-400 leading-relaxed">
+                            <div className="p-6 pt-0 text-ink-soft leading-relaxed">
                               {faq.a}
                             </div>
                           </motion.div>
@@ -102,7 +102,7 @@ export default function FAQ() {
           transition={{ delay: 0.6 }}
           className="mt-16 text-center p-8 glass rounded-3xl"
         >
-          <p className="text-gray-400 text-sm italic">{t('faq.stillQuestions')}</p>
+          <p className="text-ink-soft text-sm italic">{t('faq.stillQuestions')}</p>
           <a href="/contact" className="mt-4 inline-block text-brand-pink font-bold border-b border-brand-pink/30 hover:border-brand-pink transition-all pb-1">
             {t('faq.contactSupport')}
           </a>

@@ -3,9 +3,11 @@ import { motion } from 'motion/react';
 import { Send, Mail, MapPin, Instagram, Github, Twitter, MessageCircle } from 'lucide-react';
 import Layout from '../components/Layout';
 import { useLanguage } from '../i18n/LanguageContext';
+import { useTheme } from '../theme/ThemeContext';
 
 export default function Contact() {
   const { t } = useLanguage();
+  const { isPaper } = useTheme();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -37,7 +39,7 @@ export default function Contact() {
         >
           <div className="text-left space-y-4">
             <h2 className="text-3xl md:text-5xl font-serif italic">{t('contact.title')}</h2>
-            <p className="text-gray-400 max-w-md">
+            <p className="text-ink-soft max-w-md">
               {t('contact.desc')}
             </p>
           </div>
@@ -48,8 +50,8 @@ export default function Contact() {
                 <Mail size={24} />
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-1">{t('contact.emailUs')}</p>
-                <p className="text-white hover:text-brand-pink transition-colors cursor-pointer">hello@loveconnect.app</p>
+                <p className="text-[10px] uppercase tracking-widest text-ink-faint font-bold mb-1">{t('contact.emailUs')}</p>
+                <p className="text-ink hover:text-brand-pink transition-colors cursor-pointer">hello@loveconnect.app</p>
               </div>
             </div>
 
@@ -58,8 +60,8 @@ export default function Contact() {
                 <MapPin size={24} />
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-1">{t('contact.ourStudio')}</p>
-                <p className="text-white">{t('contact.studioLocation')}</p>
+                <p className="text-[10px] uppercase tracking-widest text-ink-faint font-bold mb-1">{t('contact.ourStudio')}</p>
+                <p className="text-ink">{t('contact.studioLocation')}</p>
               </div>
             </div>
 
@@ -68,20 +70,20 @@ export default function Contact() {
                 <MessageCircle size={24} />
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-1">{t('contact.whatsapp')}</p>
-                <p className="text-white hover:text-green-500 transition-colors cursor-pointer">+62 (812) 3456-7890</p>
+                <p className="text-[10px] uppercase tracking-widest text-ink-faint font-bold mb-1">{t('contact.whatsapp')}</p>
+                <p className="text-ink hover:text-green-500 transition-colors cursor-pointer">+62 (812) 3456-7890</p>
               </div>
             </div>
           </div>
 
           <div className="pt-8 flex gap-6">
-            <a href="#" className="w-12 h-12 glass rounded-2xl flex items-center justify-center text-gray-400 hover:text-brand-pink hover:border-brand-pink/30 transition-all hover:scale-110">
+            <a href="#" className="w-12 h-12 glass rounded-2xl flex items-center justify-center text-ink-soft hover:text-brand-pink hover:border-brand-pink/30 transition-all hover:scale-110">
               <Instagram size={20} />
             </a>
-            <a href="#" className="w-12 h-12 glass rounded-2xl flex items-center justify-center text-gray-400 hover:text-brand-blue hover:border-brand-blue/30 transition-all hover:scale-110">
+            <a href="#" className="w-12 h-12 glass rounded-2xl flex items-center justify-center text-ink-soft hover:text-brand-blue hover:border-brand-blue/30 transition-all hover:scale-110">
               <Github size={20} />
             </a>
-            <a href="#" className="w-12 h-12 glass rounded-2xl flex items-center justify-center text-gray-400 hover:text-brand-blue/80 hover:border-brand-blue/30 transition-all hover:scale-110">
+            <a href="#" className="w-12 h-12 glass rounded-2xl flex items-center justify-center text-ink-soft hover:text-brand-blue/80 hover:border-brand-blue/30 transition-all hover:scale-110">
               <Twitter size={20} />
             </a>
           </div>
@@ -106,62 +108,62 @@ export default function Contact() {
                 <Send size={32} />
               </div>
               <h3 className="text-2xl font-serif italic">{t('contact.messageSent')}</h3>
-              <p className="text-gray-400">{t('contact.thanks')}</p>
+              <p className="text-ink-soft">{t('contact.thanks')}</p>
             </motion.div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold ml-4">{t('contact.fullName')}</label>
+                  <label className="text-[10px] uppercase tracking-widest text-ink-faint font-bold ml-4">{t('contact.fullName')}</label>
                   <input
                     required
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-brand-pink/50 outline-hidden transition-all text-sm"
+                    className="w-full bg-surface-soft border border-hairline rounded-2xl px-6 py-4 focus:border-brand-pink/50 outline-hidden transition-all text-sm"
                     placeholder={t('contact.namePlaceholder')}
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold ml-4">{t('contact.emailAddress')}</label>
+                  <label className="text-[10px] uppercase tracking-widest text-ink-faint font-bold ml-4">{t('contact.emailAddress')}</label>
                   <input
                     required
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-brand-pink/50 outline-hidden transition-all text-sm"
+                    className="w-full bg-surface-soft border border-hairline rounded-2xl px-6 py-4 focus:border-brand-pink/50 outline-hidden transition-all text-sm"
                     placeholder="hello@example.com"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold ml-4">{t('contact.subject')}</label>
+                <label className="text-[10px] uppercase tracking-widest text-ink-faint font-bold ml-4">{t('contact.subject')}</label>
                 <select
                   name="subject"
                   value={formData.subject}
                   onChange={handleChange}
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-brand-pink/50 outline-hidden transition-all text-sm appearance-none cursor-pointer"
+                  className="w-full bg-surface-soft border border-hairline rounded-2xl px-6 py-4 focus:border-brand-pink/50 outline-hidden transition-all text-sm appearance-none cursor-pointer"
                 >
-                  <option value="" className="bg-brand-midnight">{t('contact.selectSubject')}</option>
-                  <option value="feedback" className="bg-brand-midnight">{t('contact.generalFeedback')}</option>
-                  <option value="support" className="bg-brand-midnight">{t('contact.gameSupport')}</option>
-                  <option value="partnership" className="bg-brand-midnight">{t('contact.partnership')}</option>
-                  <option value="other" className="bg-brand-midnight">{t('contact.other')}</option>
+                  <option value="" style={{ backgroundColor: isPaper ? 'var(--color-surface)' : 'var(--color-bg-alt)' }}>{t('contact.selectSubject')}</option>
+                  <option value="feedback" style={{ backgroundColor: isPaper ? 'var(--color-surface)' : 'var(--color-bg-alt)' }}>{t('contact.generalFeedback')}</option>
+                  <option value="support" style={{ backgroundColor: isPaper ? 'var(--color-surface)' : 'var(--color-bg-alt)' }}>{t('contact.gameSupport')}</option>
+                  <option value="partnership" style={{ backgroundColor: isPaper ? 'var(--color-surface)' : 'var(--color-bg-alt)' }}>{t('contact.partnership')}</option>
+                  <option value="other" style={{ backgroundColor: isPaper ? 'var(--color-surface)' : 'var(--color-bg-alt)' }}>{t('contact.other')}</option>
                 </select>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold ml-4">{t('contact.message')}</label>
+                <label className="text-[10px] uppercase tracking-widest text-ink-faint font-bold ml-4">{t('contact.message')}</label>
                 <textarea
                   required
                   name="message"
                   rows={5}
                   value={formData.message}
                   onChange={handleChange}
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-brand-pink/50 outline-hidden transition-all text-sm resize-none"
+                  className="w-full bg-surface-soft border border-hairline rounded-2xl px-6 py-4 focus:border-brand-pink/50 outline-hidden transition-all text-sm resize-none"
                   placeholder={t('contact.messagePlaceholder')}
                 />
               </div>

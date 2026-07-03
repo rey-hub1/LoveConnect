@@ -15,7 +15,7 @@ export default function About() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-serif italic mb-6">{t('about.missionTitle')}</h2>
-          <p className="text-gray-400 text-lg leading-relaxed max-w-2xl mx-auto">
+          <p className="text-ink-soft text-lg leading-relaxed max-w-2xl mx-auto">
             {t('about.missionDesc')}
           </p>
         </motion.div>
@@ -31,7 +31,7 @@ export default function About() {
               <Heart size={24} fill="currentColor" />
             </div>
             <h3 className="text-xl font-serif italic">{t('about.card1Title')}</h3>
-            <p className="text-gray-400 text-sm leading-relaxed">
+            <p className="text-ink-soft text-sm leading-relaxed">
               {t('about.card1Desc')}
             </p>
           </motion.div>
@@ -46,7 +46,7 @@ export default function About() {
               <MessageCircle size={24} fill="currentColor" />
             </div>
             <h3 className="text-xl font-serif italic">{t('about.card2Title')}</h3>
-            <p className="text-gray-400 text-sm leading-relaxed">
+            <p className="text-ink-soft text-sm leading-relaxed">
               {t('about.card2Desc')}
             </p>
           </motion.div>
@@ -61,7 +61,7 @@ export default function About() {
               <Shield size={24} fill="currentColor" />
             </div>
             <h3 className="text-xl font-serif italic">{t('about.card3Title')}</h3>
-            <p className="text-gray-400 text-sm leading-relaxed">
+            <p className="text-ink-soft text-sm leading-relaxed">
               {t('about.card3Desc')}
             </p>
           </motion.div>
@@ -76,7 +76,7 @@ export default function About() {
               <Sparkles size={24} fill="currentColor" />
             </div>
             <h3 className="text-xl font-serif italic">{t('about.card4Title')}</h3>
-            <p className="text-gray-400 text-sm leading-relaxed">
+            <p className="text-ink-soft text-sm leading-relaxed">
               {t('about.card4Desc')}
             </p>
           </motion.div>
@@ -86,10 +86,10 @@ export default function About() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="text-center bg-white/5 p-12 rounded-[3rem] border border-white/10"
+          className="text-center bg-surface-soft p-12 rounded-[3rem] border border-hairline"
         >
           <h3 className="text-2xl font-serif italic mb-4">{t('about.ctaTitle')}</h3>
-          <p className="text-gray-400 mb-8 max-w-lg mx-auto">
+          <p className="text-ink-soft mb-8 max-w-lg mx-auto">
             {t('about.ctaDesc')}
           </p>
           <a href="/" className="inline-block px-10 py-4 rounded-full bg-linear-to-r from-brand-pink to-brand-blue text-white font-bold uppercase tracking-widest shadow-xl hover:scale-105 transition-transform">

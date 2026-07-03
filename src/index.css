@@ -19,17 +19,69 @@
   /* compat aliases */
   --color-brand-pink: #e07a6e;
   --color-brand-blue: #2a9d8f;
+
+  /* semantic tokens — flip per [data-theme] below.
+     use these (bg-surface, text-ink, border-hairline, etc.) for anything
+     that must restyle structurally between themes, not just recolor. */
+  --color-bg:             #0e080b;
+  --color-bg-alt:         #180d10;
+  --color-surface:        rgba(255,255,255,0.055);
+  --color-surface-strong: rgba(255,255,255,0.09);
+  --color-surface-soft:   rgba(255,255,255,0.035);
+  --color-ink:            #f5ede8;
+  --color-ink-soft:       rgba(240,230,222,0.7);
+  --color-ink-faint:      rgba(240,230,222,0.4);
+  --color-hairline:       rgba(201,169,110,0.15);
+}
+
+/* ─────────────────────────────────────────────
+   White Paper theme — not a recolor, a different
+   material. No blur/glass, no neon glow, no
+   gradient-fill text. Flat stock, ink borders,
+   letterpress rules, soft paper-lift shadows.
+───────────────────────────────────────────── */
+:root[data-theme='paper'] {
+  --color-brand-rose:     #a1443a;
+  --color-brand-gold:     #8a6a2f;
+  --color-brand-teal:     #1f6b61;
+  --color-brand-amber:    #9c651f;
+  --color-brand-violet:   #6b4a96;
+  --color-brand-crimson:  #8a2b20;
+  --color-brand-midnight: #f4efe2;
+  --color-brand-deep:     #ece3cf;
+  --color-brand-ivory:    #2b2419;
+
+  --color-brand-pink: #a1443a;
+  --color-brand-blue: #1f6b61;
+
+  --color-bg:             #f4efe2;
+  --color-bg-alt:         #ece3cf;
+  --color-surface:        #fffdf7;
+  --color-surface-strong: #fbf6ea;
+  --color-surface-soft:   #f9f4e8;
+  --color-ink:            #241f16;
+  --color-ink-soft:       rgba(36,31,22,0.72);
+  --color-ink-faint:      rgba(36,31,22,0.45);
+  --color-hairline:       rgba(36,31,22,0.22);
 }
 
 @layer base {
   body {
-    @apply bg-brand-midnight text-brand-ivory font-sans antialiased;
+    @apply font-sans antialiased;
+    background: var(--color-bg);
+    color: var(--color-ink);
     min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   ::selection {
     background: rgba(201, 169, 110, 0.25);
     color: #f0e6de;
+  }
+
+  :root[data-theme='paper'] ::selection {
+    background: rgba(138, 106, 47, 0.25);
+    color: #241f16;
   }
 }
 
@@ -71,6 +123,45 @@
     height: 1px;
     background: currentColor;
     opacity: 0.2;
+  }
+
+  /* Paper theme: glass card becomes flat stock, ink border, no blur, no glow */
+  :root[data-theme='paper'] .glass,
+  :root[data-theme='paper'] .glass-warm {
+    background: var(--color-surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 1px solid var(--color-hairline);
+    box-shadow: 0 1px 2px rgba(36,31,22,0.06), 0 8px 20px rgba(36,31,22,0.05);
+  }
+
+  :root[data-theme='paper'] .glow-rose,
+  :root[data-theme='paper'] .glow-teal,
+  :root[data-theme='paper'] .glow-gold,
+  :root[data-theme='paper'] .glow-violet,
+  :root[data-theme='paper'] .glow-amber,
+  :root[data-theme='paper'] .glow-crimson,
+  :root[data-theme='paper'] .glow-pink,
+  :root[data-theme='paper'] .glow-blue,
+  :root[data-theme='paper'] .glow-yellow,
+  :root[data-theme='paper'] .glow-purple {
+    box-shadow: 0 1px 2px rgba(36,31,22,0.08), 0 6px 16px rgba(36,31,22,0.06);
+  }
+
+  :root[data-theme='paper'] .text-shimmer {
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    color: var(--color-ink);
+    animation: none;
+  }
+
+  /* subtle paper fiber texture, used instead of glow orbs in Layout */
+  .paper-texture {
+    background-image:
+      radial-gradient(rgba(36,31,22,0.05) 0.5px, transparent 0.5px),
+      radial-gradient(rgba(36,31,22,0.035) 0.5px, transparent 0.5px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1.5px 1.5px;
   }
 }
 
