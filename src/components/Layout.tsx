@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'motion/react';
+import { useLanguage } from '../i18n/LanguageContext';
+import LanguageToggle from './LanguageToggle';
 
 const PROGRAMMER_NAME = "Reyno Nawfal Ghaisan";
 
@@ -10,6 +12,7 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
+  const { t } = useLanguage();
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-x-hidden">
@@ -70,7 +73,10 @@ export default function Layout({ children }: LayoutProps) {
       {/* Main */}
       <main className="flex-1 flex flex-col px-6 py-8 lg:px-16 lg:py-12 max-w-6xl mx-auto w-full">
         {/* Header */}
-        <header className="text-center mb-10 md:mb-16">
+        <header className="text-center mb-10 md:mb-16 relative">
+          <div className="flex justify-center md:justify-end mb-4 md:absolute md:top-0 md:right-0 md:mb-0">
+            <LanguageToggle />
+          </div>
           <motion.div
             initial={{ opacity: 0, y: -24 }}
             animate={{ opacity: 1, y: 0 }}
@@ -114,7 +120,7 @@ export default function Layout({ children }: LayoutProps) {
             className="tracking-[0.25em] uppercase text-xs md:text-sm font-medium"
             style={{ color: 'rgba(240,230,222,0.75)', letterSpacing: '0.25em' }}
           >
-            The Art of Deeper Connections
+            {t('layout.tagline')}
           </motion.p>
         </header>
 
@@ -132,15 +138,15 @@ export default function Layout({ children }: LayoutProps) {
               {PROGRAMMER_NAME}
             </p>
             <p className="text-[10px] italic" style={{ color: 'rgba(240,230,222,0.5)' }}>
-              Crafted with love to create special moments between souls.
+              {t('layout.footerCraft')}
             </p>
           </div>
 
           <nav className="flex gap-8 text-[10px] uppercase tracking-[0.2em] font-medium" aria-label="Footer Navigation">
             {[
-              { to: '/about', label: 'About' },
-              { to: '/faq', label: 'FAQ' },
-              { to: '/contact', label: 'Contact' },
+              { to: '/about', label: t('nav.about') },
+              { to: '/faq', label: t('nav.faq') },
+              { to: '/contact', label: t('nav.contact') },
             ].map(({ to, label }) => (
               <Link
                 key={to}

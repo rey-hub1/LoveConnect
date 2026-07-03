@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Heart,
@@ -12,6 +12,7 @@ import {
   MessageCircle,
   Sparkles,
   User,
+  Users,
   Swords,
   Trophy,
   Home as HomeIcon,
@@ -26,9 +27,11 @@ import { versusQuestions, VersusQuestion } from '../data/versusQuestions';
 import { marriedQuestions } from '../data/marriedQuestions';
 import { boysGangQuestions } from '../data/boysGangQuestions';
 import { girlsGangQuestions } from '../data/girlsGangQuestions';
+import { familyQuestions } from '../data/familyQuestions';
 import Layout from '../components/Layout';
+import { useLanguage } from '../i18n/LanguageContext';
 
-type Mode = 'casual' | 'deep' | 'versus' | 'married' | 'boysgang' | 'girlsgang';
+type Mode = 'casual' | 'deep' | 'versus' | 'married' | 'boysgang' | 'girlsgang' | 'family';
 
 interface ModeConfig {
   key: Mode;
@@ -42,74 +45,50 @@ interface ModeConfig {
   ctaLabel: string;
 }
 
-const modeConfigs: ModeConfig[] = [
-  {
-    key: 'casual',
-    label: 'Fall in Love',
-    tagline: 'For the early spark',
-    desc: 'Light questions to break the ice and discover each other naturally.',
+const MODE_VISUALS: Record<Mode, Pick<ModeConfig, 'color' | 'colorRgb' | 'icon' | 'bgIcon'>> = {
+  casual: {
     color: '#e07a6e',
     colorRgb: '224,122,110',
     icon: <Heart size={36} fill="currentColor" />,
     bgIcon: <Heart size={140} strokeWidth={0.5} />,
-    ctaLabel: 'Start Casual',
   },
-  {
-    key: 'deep',
-    label: 'Deep Talk',
-    tagline: 'For the brave hearts',
-    desc: 'Meaningful questions that build trust and reveal your true selves.',
+  deep: {
     color: '#2a9d8f',
     colorRgb: '42,157,143',
     icon: <Moon size={36} fill="currentColor" />,
     bgIcon: <MessageCircle size={140} strokeWidth={0.5} />,
-    ctaLabel: 'Start Deep',
   },
-  {
-    key: 'versus',
-    label: 'Versus Mode',
-    tagline: 'For the competitive souls',
-    desc: 'Vote who fits each scenario and crown the winner.',
+  versus: {
     color: '#c9a96e',
     colorRgb: '201,169,110',
     icon: <Swords size={36} />,
     bgIcon: <Trophy size={140} strokeWidth={0.5} />,
-    ctaLabel: 'Start Versus',
   },
-  {
-    key: 'married',
-    label: 'Married Life',
-    tagline: 'For lifelong partners',
-    desc: 'Strengthen your bond with topics only the committed truly explore.',
+  married: {
     color: '#9b72cf',
     colorRgb: '155,114,207',
     icon: <HomeIcon size={36} />,
     bgIcon: <Heart size={140} strokeWidth={0.5} />,
-    ctaLabel: 'Start Married',
   },
-  {
-    key: 'boysgang',
-    label: 'Boys Gang',
-    tagline: 'Nongkrong legends',
-    desc: 'Cair dulu, makin dalam. Buat malam bareng bocil makin bermakna.',
+  boysgang: {
     color: '#d4914a',
     colorRgb: '212,145,74',
     icon: <Flame size={36} />,
     bgIcon: <Flame size={140} strokeWidth={0.5} />,
-    ctaLabel: 'Mulai Nongkrong',
   },
-  {
-    key: 'girlsgang',
-    label: 'Girls Gang',
-    tagline: 'Safe space for all',
-    desc: 'Jujur, dalam, dan aman. Girls night yang beneran berkesan.',
+  girlsgang: {
     color: '#c97b8a',
     colorRgb: '201,123,138',
     icon: <Flower2 size={36} />,
     bgIcon: <Flower2 size={140} strokeWidth={0.5} />,
-    ctaLabel: 'Mulai Girling',
   },
-];
+  family: {
+    color: '#6fa886',
+    colorRgb: '111,168,134',
+    icon: <Users size={36} />,
+    bgIcon: <Users size={140} strokeWidth={0.5} />,
+  },
+};
 
 function OrnamentDivider({ color }: { color: string }) {
   return (
@@ -318,8 +297,23 @@ function OracleCard({
   scoreCowok, scoreCewek, progressPct, progressLabel,
   renderFormattedText, onNext, onVersusVote, onReset, onChangeMode,
 }: OracleCardProps) {
+  const { t } = useLanguage();
   const color = activeCfg?.color ?? '#c9a96e';
   const rgb = activeCfg?.colorRgb ?? '201,169,110';
+  const boyLabel = t('home.boyLabel');
+  const girlLabel = t('home.girlLabel');
+
+  const completionQuote =
+    mode === 'married' ? t('home.quote.married')
+    : mode === 'boysgang' ? t('home.quote.boysgang')
+    : mode === 'girlsgang' ? t('home.quote.girlsgang')
+    : mode === 'family' ? t('home.quote.family')
+    : t('home.quote.default');
+
+  const versusResultLine =
+    scoreCowok > scoreCewek ? t('home.boyWins')
+    : scoreCewek > scoreCowok ? t('home.girlWins')
+    : t('home.tie');
 
   return (
     <div className="relative w-full max-w-2xl" style={{ perspective: '1200px' }}>
@@ -331,10 +325,11 @@ function OracleCard({
             style={{
               top: 8, bottom: -8,
               transform: 'rotate(-2deg) scaleX(0.96)',
-              background: `rgba(${rgb},0.04)`,
+              background: `rgba(${rgb},0.055)`,
               borderWidth: '1px 1px 1px 3px',
               borderStyle: 'solid',
-              borderColor: `rgba(${rgb},0.06) rgba(${rgb},0.06) rgba(${rgb},0.06) rgba(${rgb},0.2)`,
+              borderColor: `rgba(${rgb},0.1) rgba(${rgb},0.1) rgba(${rgb},0.1) rgba(${rgb},0.3)`,
+              boxShadow: '0 12px 40px rgba(0,0,0,0.35)',
               zIndex: 0,
             }}
           />
@@ -379,11 +374,37 @@ function OracleCard({
             }}
           />
 
+          {/* Animated top shimmer line */}
+          <motion.div
+            className="absolute top-0 left-0 right-0 pointer-events-none"
+            style={{
+              height: 1,
+              background: `linear-gradient(90deg, transparent, rgba(${rgb},0.75), transparent)`,
+              backgroundSize: '200% 100%',
+              zIndex: 5,
+            }}
+            animate={{ backgroundPosition: ['200% 0', '-200% 0'] }}
+            transition={{ repeat: Infinity, duration: 4.5, ease: 'linear' }}
+          />
+
           {/* Corner ornament SVG */}
           <svg
             className="absolute top-0 right-0 pointer-events-none"
             width="90" height="90" viewBox="0 0 90 90"
             style={{ opacity: 0.35 }}
+          >
+            <path d="M90,0 L90,45 Q90,0 45,0 Z" fill={color} fillOpacity="0.12" />
+            <path d="M90,0 L90,65 Q90,0 25,0 Z" fill="none" stroke={color} strokeWidth="0.8" />
+            <path d="M90,0 L90,30 Q90,0 60,0 Z" fill="none" stroke={color} strokeWidth="1.2" />
+            <circle cx="78" cy="12" r="1.5" fill={color} fillOpacity="0.6" />
+            <circle cx="68" cy="22" r="1" fill={color} fillOpacity="0.4" />
+          </svg>
+
+          {/* Mirrored bottom-left corner ornament */}
+          <svg
+            className="absolute bottom-0 left-0 pointer-events-none"
+            width="90" height="90" viewBox="0 0 90 90"
+            style={{ opacity: 0.28, transform: 'rotate(180deg)' }}
           >
             <path d="M90,0 L90,45 Q90,0 45,0 Z" fill={color} fillOpacity="0.12" />
             <path d="M90,0 L90,65 Q90,0 25,0 Z" fill="none" stroke={color} strokeWidth="0.8" />
@@ -412,7 +433,7 @@ function OracleCard({
                 style={{ background: `rgba(${rgb},0.15)`, border: `1px solid rgba(${rgb},0.25)` }}
               >
                 <span style={{ color, display: 'flex' }}>
-                  {activeCfg?.icon && React.cloneElement(activeCfg.icon as React.ReactElement, { size: 14 })}
+                  {activeCfg?.icon && React.cloneElement(activeCfg.icon as React.ReactElement<{ size?: number }>, { size: 14 })}
                 </span>
               </div>
               <div>
@@ -437,7 +458,7 @@ function OracleCard({
                   <span className="text-sm"> / {progressLabel.split(' / ')[1]}</span>
                 </div>
                 <p className="text-[9px] uppercase tracking-widest mt-0.5" style={{ color: 'rgba(240,230,222,0.3)' }}>
-                  questions
+                  {t('home.questionsLabel')}
                 </p>
               </div>
             )}
@@ -452,14 +473,14 @@ function OracleCard({
               style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
             >
               <div className="text-center">
-                <p className="text-[9px] uppercase tracking-widest mb-0.5" style={{ color: 'rgba(42,157,143,0.8)' }}>Boy</p>
+                <p className="text-[9px] uppercase tracking-widest mb-0.5" style={{ color: 'rgba(42,157,143,0.8)' }}>{boyLabel}</p>
                 <p className="text-2xl font-mono font-bold" style={{ color: '#2a9d8f' }}>{scoreCowok}</p>
               </div>
               <div style={{ width: 1, height: 36, background: 'rgba(255,255,255,0.08)' }} />
               <Swords size={16} style={{ color: 'rgba(201,169,110,0.5)' }} />
               <div style={{ width: 1, height: 36, background: 'rgba(255,255,255,0.08)' }} />
               <div className="text-center">
-                <p className="text-[9px] uppercase tracking-widest mb-0.5" style={{ color: 'rgba(224,122,110,0.8)' }}>Girl</p>
+                <p className="text-[9px] uppercase tracking-widest mb-0.5" style={{ color: 'rgba(224,122,110,0.8)' }}>{girlLabel}</p>
                 <p className="text-2xl font-mono font-bold" style={{ color: '#e07a6e' }}>{scoreCewek}</p>
               </div>
             </motion.div>
@@ -502,7 +523,7 @@ function OracleCard({
                     className="font-serif italic text-lg"
                     style={{ color: 'rgba(240,230,222,0.45)' }}
                   >
-                    Crafting a special moment…
+                    {t('home.loading')}
                   </span>
                 </motion.div>
               ) : isCompleted ? (
@@ -527,38 +548,28 @@ function OracleCard({
                     className="font-serif italic leading-tight"
                     style={{ fontSize: 'clamp(1.6rem,4vw,2.3rem)', fontWeight: 600, color: '#f5ede8' }}
                   >
-                    {mode === 'versus' ? 'Versus Finished!' : 'Journey Complete.'}
+                    {mode === 'versus' ? t('home.versusFinished') : t('home.journeyComplete')}
                   </h3>
 
                   {mode === 'versus' ? (
                     <>
                       <p className="font-serif italic text-xl" style={{ color }}>
-                        {scoreCowok > scoreCewek
-                          ? 'Boy Wins! He deserves extra love today.'
-                          : scoreCewek > scoreCowok
-                          ? 'Girl Wins! Time to pamper her.'
-                          : "It's a Tie — equally amazing."}
+                        {versusResultLine}
                       </p>
                       <div className="flex justify-center gap-16 pt-3">
                         <div className="text-center">
-                          <p className="text-[10px] uppercase tracking-widest mb-1" style={{ color: 'rgba(42,157,143,0.8)' }}>Boy</p>
+                          <p className="text-[10px] uppercase tracking-widest mb-1" style={{ color: 'rgba(42,157,143,0.8)' }}>{boyLabel}</p>
                           <p className="text-5xl font-mono font-bold" style={{ color: '#2a9d8f' }}>{scoreCowok}</p>
                         </div>
                         <div className="text-center">
-                          <p className="text-[10px] uppercase tracking-widest mb-1" style={{ color: 'rgba(224,122,110,0.8)' }}>Girl</p>
+                          <p className="text-[10px] uppercase tracking-widest mb-1" style={{ color: 'rgba(224,122,110,0.8)' }}>{girlLabel}</p>
                           <p className="text-5xl font-mono font-bold" style={{ color: '#e07a6e' }}>{scoreCewek}</p>
                         </div>
                       </div>
                     </>
                   ) : (
                     <p className="font-serif italic text-lg md:text-xl leading-relaxed" style={{ color }}>
-                      {mode === 'married'
-                        ? '"May your journey together be endless and full of joy."'
-                        : mode === 'boysgang'
-                        ? '"Semua udah kejawab. Ini baru namanya nongkrong."'
-                        : mode === 'girlsgang'
-                        ? '"Semua didengar. Ini yang namanya safe space beneran."'
-                        : '"May your love be long-lasting, full and always happy."'}
+                      {completionQuote}
                     </p>
                   )}
 
@@ -571,16 +582,55 @@ function OracleCard({
                   </div>
                 </motion.div>
               ) : (
-                <motion.h3
+                <motion.div
                   key="question"
-                  initial={{ opacity: 0, y: 8 }}
+                  initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.15, duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
-                  className="font-serif italic leading-snug text-center relative z-10"
-                  style={{ fontSize: 'clamp(1.35rem, 3.5vw, 2.1rem)', fontWeight: 600, color: '#f5ede8' }}
+                  transition={{ delay: 0.12, duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+                  className="relative z-10 flex flex-col items-center text-center w-full"
                 >
-                  {renderFormattedText(currentQuestion!, mode)}
-                </motion.h3>
+                  {/* Decorative opening quote */}
+                  <motion.span
+                    aria-hidden
+                    initial={{ opacity: 0, scale: 0.5, y: 6 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ delay: 0.05, duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
+                    className="font-serif select-none leading-none"
+                    style={{
+                      fontSize: '3.4rem',
+                      color: `rgba(${rgb},0.4)`,
+                      textShadow: `0 0 28px rgba(${rgb},0.45)`,
+                      marginBottom: '-0.55rem',
+                    }}
+                  >
+                    “
+                  </motion.span>
+
+                  <h3
+                    className="font-serif italic leading-snug"
+                    style={{
+                      fontSize: 'clamp(1.35rem, 3.5vw, 2.1rem)',
+                      fontWeight: 600,
+                      color: '#f5ede8',
+                      textShadow: '0 2px 28px rgba(0,0,0,0.55)',
+                      maxWidth: '32ch',
+                    }}
+                  >
+                    {renderFormattedText(currentQuestion!, mode)}
+                  </h3>
+
+                  {/* Ornament under question */}
+                  <motion.div
+                    initial={{ opacity: 0, scaleX: 0 }}
+                    animate={{ opacity: 1, scaleX: 1 }}
+                    transition={{ delay: 0.3, duration: 0.5, ease: 'easeOut' }}
+                    className="flex items-center gap-1.5 mt-5"
+                  >
+                    <div style={{ width: 26, height: 1, background: `linear-gradient(to right, transparent, rgba(${rgb},0.55))` }} />
+                    <div style={{ width: 4, height: 4, borderRadius: '50%', background: color, boxShadow: `0 0 10px rgba(${rgb},0.9)` }} />
+                    <div style={{ width: 26, height: 1, background: `linear-gradient(to left, transparent, rgba(${rgb},0.55))` }} />
+                  </motion.div>
+                </motion.div>
               )}
             </AnimatePresence>
           </div>
@@ -603,7 +653,7 @@ function OracleCard({
                   }}
                 >
                   <RotateCcw size={13} />
-                  Play Again
+                  {t('home.playAgain')}
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.03 }}
@@ -616,7 +666,7 @@ function OracleCard({
                     color: 'rgba(240,230,222,0.7)',
                   }}
                 >
-                  Change Mode
+                  {t('home.changeMode')}
                 </motion.button>
               </div>
             ) : mode === 'versus' ? (
@@ -625,7 +675,7 @@ function OracleCard({
                 <div className="flex" style={{ minHeight: 110 }}>
                   <VersusVoteButton
                     side="left"
-                    label="Boy"
+                    label={boyLabel}
                     color="#2a9d8f"
                     colorRgb="42,157,143"
                     score={scoreCowok}
@@ -634,7 +684,7 @@ function OracleCard({
                   />
                   <VersusVoteButton
                     side="right"
-                    label="Girl"
+                    label={girlLabel}
                     color="#e07a6e"
                     colorRgb="224,122,110"
                     score={scoreCewek}
@@ -650,7 +700,7 @@ function OracleCard({
                     onMouseEnter={e => (e.currentTarget.style.color = 'rgba(240,230,222,0.75)')}
                     onMouseLeave={e => (e.currentTarget.style.color = 'rgba(240,230,222,0.35)')}
                   >
-                    ← Change Mode
+                    {t('home.changeModeBack')}
                   </button>
                 </div>
               </div>
@@ -664,13 +714,13 @@ function OracleCard({
                   disabled={isLoading}
                   className="flex-1 flex items-center justify-center gap-2.5 py-3.5 rounded-2xl font-semibold text-sm tracking-wide relative overflow-hidden group"
                   style={{
-                    background: `rgba(${rgb},0.14)`,
-                    border: `1px solid rgba(${rgb},0.3)`,
-                    color,
+                    background: `linear-gradient(135deg, ${color} 0%, rgba(${rgb},0.72) 100%)`,
+                    color: '#140a0e',
+                    boxShadow: `0 10px 32px rgba(${rgb},0.35), inset 0 1px 0 rgba(255,255,255,0.25)`,
                   }}
                 >
                   <span className="relative z-10 flex items-center gap-2">
-                    Next Question
+                    {t('home.next')}
                     <motion.span
                       animate={{ x: [0, 4, 0] }}
                       transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
@@ -680,7 +730,7 @@ function OracleCard({
                   </span>
                   <div
                     className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    style={{ background: `rgba(${rgb},0.06)` }}
+                    style={{ background: 'rgba(255,255,255,0.14)' }}
                   />
                 </motion.button>
                 <motion.button
@@ -696,7 +746,7 @@ function OracleCard({
                   onMouseEnter={e => (e.currentTarget.style.color = 'rgba(240,230,222,0.9)')}
                   onMouseLeave={e => (e.currentTarget.style.color = 'rgba(240,230,222,0.55)')}
                 >
-                  ← Modes
+                  {t('home.modesBack')}
                 </motion.button>
               </div>
             )}
@@ -708,6 +758,7 @@ function OracleCard({
 }
 
 export default function Home() {
+  const { language, t } = useLanguage();
   const [currentQuestion, setCurrentQuestion] = useState<string | null>(null);
   const [currentVersusQuestion, setCurrentVersusQuestion] = useState<VersusQuestion | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -718,42 +769,36 @@ export default function Home() {
   const [seenMarried, setSeenMarried] = useState<string[]>([]);
   const [seenBoysGang, setSeenBoysGang] = useState<string[]>([]);
   const [seenGirlsGang, setSeenGirlsGang] = useState<string[]>([]);
+  const [seenFamily, setSeenFamily] = useState<string[]>([]);
   const [isCompleted, setIsCompleted] = useState(false);
   const [scoreCowok, setScoreCowok] = useState(0);
   const [scoreCewek, setScoreCewek] = useState(0);
 
+  const modeConfigs: ModeConfig[] = useMemo(() => [
+    { key: 'casual', ...MODE_VISUALS.casual, label: t('mode.casual.label'), tagline: t('mode.casual.tagline'), desc: t('mode.casual.desc'), ctaLabel: t('mode.casual.cta') },
+    { key: 'deep', ...MODE_VISUALS.deep, label: t('mode.deep.label'), tagline: t('mode.deep.tagline'), desc: t('mode.deep.desc'), ctaLabel: t('mode.deep.cta') },
+    { key: 'versus', ...MODE_VISUALS.versus, label: t('mode.versus.label'), tagline: t('mode.versus.tagline'), desc: t('mode.versus.desc'), ctaLabel: t('mode.versus.cta') },
+    { key: 'married', ...MODE_VISUALS.married, label: t('mode.married.label'), tagline: t('mode.married.tagline'), desc: t('mode.married.desc'), ctaLabel: t('mode.married.cta') },
+    { key: 'boysgang', ...MODE_VISUALS.boysgang, label: t('mode.boysgang.label'), tagline: t('mode.boysgang.tagline'), desc: t('mode.boysgang.desc'), ctaLabel: t('mode.boysgang.cta') },
+    { key: 'girlsgang', ...MODE_VISUALS.girlsgang, label: t('mode.girlsgang.label'), tagline: t('mode.girlsgang.tagline'), desc: t('mode.girlsgang.desc'), ctaLabel: t('mode.girlsgang.cta') },
+    { key: 'family', ...MODE_VISUALS.family, label: t('mode.family.label'), tagline: t('mode.family.tagline'), desc: t('mode.family.desc'), ctaLabel: t('mode.family.cta') },
+  ], [t]);
+
   const activeCfg = modeConfigs.find(c => c.key === mode) ?? null;
 
   useEffect(() => {
-    if (!mode) {
-      document.title = "LoveConnect — Deep Conversation & Relationship Game";
-    } else {
-      const names: Record<Mode, string> = {
-        casual: 'Fall in Love',
-        deep: 'Deep Talk',
-        versus: 'Versus Mode',
-        married: 'Married Life',
-        boysgang: 'Boys Gang',
-        girlsgang: 'Girls Gang',
-      };
-      document.title = `${names[mode]} | LoveConnect`;
-    }
-  }, [mode]);
+    document.title = mode && activeCfg
+      ? `${activeCfg.label} | LoveConnect`
+      : 'LoveConnect — Deep Conversation & Relationship Game';
+  }, [mode, activeCfg]);
 
   const renderFormattedText = (text: string, type: Mode) => {
-    const colorMap: Record<Mode, string> = {
-      casual: '#e07a6e',
-      deep: '#2a9d8f',
-      versus: '#c9a96e',
-      married: '#9b72cf',
-      boysgang: '#d4914a',
-      girlsgang: '#c97b8a',
-    };
+    const color = modeConfigs.find(c => c.key === type)?.color ?? '#c9a96e';
     const parts = text.split(/(\*.*?\*)/g);
     return parts.map((part, index) => {
       if (part.startsWith('*') && part.endsWith('*')) {
         return (
-          <span key={index} style={{ color: colorMap[type], fontWeight: 600 }}>
+          <span key={index} style={{ color, fontWeight: 600 }}>
             {part.slice(1, -1)}
           </span>
         );
@@ -768,7 +813,8 @@ export default function Home() {
     setIsCompleted(false);
 
     if (type === 'versus') {
-      const available = versusQuestions.filter(q => !seenVersus.includes(q.text));
+      const pool = versusQuestions[language];
+      const available = pool.filter(q => !seenVersus.includes(q.text));
       if (available.length === 0) {
         setTimeout(() => { setIsCompleted(true); setIsLoading(false); }, 50);
         return;
@@ -779,16 +825,20 @@ export default function Home() {
       return;
     }
 
-    const allQ = type === 'casual' ? casualQuestions
+    const allQ = (
+      type === 'casual' ? casualQuestions
       : type === 'deep' ? deepQuestions
       : type === 'boysgang' ? boysGangQuestions
       : type === 'girlsgang' ? girlsGangQuestions
-      : marriedQuestions;
+      : type === 'family' ? familyQuestions
+      : marriedQuestions
+    )[language];
 
     const seenQ = type === 'casual' ? seenCasual
       : type === 'deep' ? seenDeep
       : type === 'boysgang' ? seenBoysGang
       : type === 'girlsgang' ? seenGirlsGang
+      : type === 'family' ? seenFamily
       : seenMarried;
 
     const available = allQ.filter(q => !seenQ.includes(q));
@@ -802,6 +852,7 @@ export default function Home() {
     else if (type === 'deep') setSeenDeep(prev => [...prev, q]);
     else if (type === 'boysgang') setSeenBoysGang(prev => [...prev, q]);
     else if (type === 'girlsgang') setSeenGirlsGang(prev => [...prev, q]);
+    else if (type === 'family') setSeenFamily(prev => [...prev, q]);
     else setSeenMarried(prev => [...prev, q]);
 
     setTimeout(() => { setCurrentQuestion(q); setIsLoading(false); }, 10);
@@ -823,6 +874,7 @@ export default function Home() {
       else if (mode === 'married') setSeenMarried([]);
       else if (mode === 'boysgang') setSeenBoysGang([]);
       else if (mode === 'girlsgang') setSeenGirlsGang([]);
+      else if (mode === 'family') setSeenFamily([]);
       else { setSeenVersus([]); setScoreCowok(0); setScoreCewek(0); }
       setIsCompleted(false);
       generateQuestion(mode!);
@@ -832,22 +884,24 @@ export default function Home() {
   const progressPct = () => {
     if (!mode) return 0;
     if (isCompleted) return 100;
-    if (mode === 'versus') return (seenVersus.length / versusQuestions.length) * 100;
-    if (mode === 'married') return (seenMarried.length / marriedQuestions.length) * 100;
-    if (mode === 'boysgang') return (seenBoysGang.length / boysGangQuestions.length) * 100;
-    if (mode === 'girlsgang') return (seenGirlsGang.length / girlsGangQuestions.length) * 100;
-    if (mode === 'casual') return (seenCasual.length / casualQuestions.length) * 100;
-    return (seenDeep.length / deepQuestions.length) * 100;
+    if (mode === 'versus') return (seenVersus.length / versusQuestions[language].length) * 100;
+    if (mode === 'married') return (seenMarried.length / marriedQuestions[language].length) * 100;
+    if (mode === 'boysgang') return (seenBoysGang.length / boysGangQuestions[language].length) * 100;
+    if (mode === 'girlsgang') return (seenGirlsGang.length / girlsGangQuestions[language].length) * 100;
+    if (mode === 'family') return (seenFamily.length / familyQuestions[language].length) * 100;
+    if (mode === 'casual') return (seenCasual.length / casualQuestions[language].length) * 100;
+    return (seenDeep.length / deepQuestions[language].length) * 100;
   };
 
   const progressLabel = () => {
     if (!mode) return '';
-    if (mode === 'versus') return `${seenVersus.length} / ${versusQuestions.length}`;
-    if (mode === 'married') return `${seenMarried.length} / ${marriedQuestions.length}`;
-    if (mode === 'boysgang') return `${seenBoysGang.length} / ${boysGangQuestions.length}`;
-    if (mode === 'girlsgang') return `${seenGirlsGang.length} / ${girlsGangQuestions.length}`;
-    if (mode === 'casual') return `${seenCasual.length} / ${casualQuestions.length}`;
-    return `${seenDeep.length} / ${deepQuestions.length}`;
+    if (mode === 'versus') return `${seenVersus.length} / ${versusQuestions[language].length}`;
+    if (mode === 'married') return `${seenMarried.length} / ${marriedQuestions[language].length}`;
+    if (mode === 'boysgang') return `${seenBoysGang.length} / ${boysGangQuestions[language].length}`;
+    if (mode === 'girlsgang') return `${seenGirlsGang.length} / ${girlsGangQuestions[language].length}`;
+    if (mode === 'family') return `${seenFamily.length} / ${familyQuestions[language].length}`;
+    if (mode === 'casual') return `${seenCasual.length} / ${casualQuestions[language].length}`;
+    return `${seenDeep.length} / ${deepQuestions[language].length}`;
   };
 
   return (
@@ -874,7 +928,7 @@ export default function Home() {
                   className="text-xs uppercase tracking-[0.3em] font-light"
                   style={{ color: 'rgba(201,169,110,0.8)' }}
                 >
-                  Choose your mode
+                  {t('home.chooseMode')}
                 </p>
               </motion.div>
 

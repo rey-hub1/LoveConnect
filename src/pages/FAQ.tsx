@@ -2,55 +2,36 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, Plus, Minus } from 'lucide-react';
 import Layout from '../components/Layout';
-
-const faqs = [
-  {
-    category: "Game Basics",
-    questions: [
-      {
-        q: "What is LoveConnect?",
-        a: "LoveConnect is an interactive deep conversation and relationship game designed to build stronger bonds, improve communication, and bring fun to your relationship through curated question modes."
-      },
-      {
-        q: "Do we have to answer every question?",
-        a: "No! The goal is to build connection. If a question feels too much, feel free to skip it. The game is just a tool to help you start your own unique conversations."
-      }
-    ]
-  },
-  {
-    category: "Game Modes",
-    questions: [
-      {
-        q: "What's the difference between Casual and Deep modes?",
-        a: "Casual Mode is perfect for new relationships or light-hearted fun. Deep Mode is designed for established couples looking to tackle more meaningful and vulnerable topics."
-      },
-      {
-        q: "How does Versus Mode work?",
-        a: "Versus Mode is a fun, lighthearted way to see who knows who best or who is more likely to do something. Points are tracked, and the winner gets bragging rights!"
-      },
-      {
-        q: "Is Married Life only for married people?",
-        a: "Not at all! While it focuses on long-term commitment and building a home together, it's great for any couple who is serious about their future together."
-      }
-    ]
-  },
-  {
-    category: "Privacy & Technology",
-    questions: [
-      {
-        q: "Where is my data stored?",
-        a: "LoveConnect is a privacy-first app. All game logic runs locally in your browser. We don't save your answers or personal data on any server."
-      },
-      {
-        q: "Is an AI generating these questions?",
-        a: "Some of our questions are crafted and refined using Gemini AI to ensure they are high-quality and impactful, but the majority are curated based on relationship science."
-      }
-    ]
-  }
-];
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<string | null>(null);
+  const { t } = useLanguage();
+
+  const faqs = [
+    {
+      category: t('faq.cat.basics'),
+      questions: [
+        { q: t('faq.q1'), a: t('faq.a1') },
+        { q: t('faq.q2'), a: t('faq.a2') },
+      ],
+    },
+    {
+      category: t('faq.cat.modes'),
+      questions: [
+        { q: t('faq.q3'), a: t('faq.a3') },
+        { q: t('faq.q4'), a: t('faq.a4') },
+        { q: t('faq.q5'), a: t('faq.a5') },
+      ],
+    },
+    {
+      category: t('faq.cat.privacy'),
+      questions: [
+        { q: t('faq.q6'), a: t('faq.a6') },
+        { q: t('faq.q7'), a: t('faq.a7') },
+      ],
+    },
+  ];
 
   const toggle = (id: string) => {
     setOpenIndex(openIndex === id ? null : id);
@@ -59,13 +40,13 @@ export default function FAQ() {
   return (
     <Layout>
       <div className="max-w-3xl mx-auto py-12 px-4">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-5xl font-serif italic mb-6">Frequently Asked</h2>
-          <p className="text-gray-400">Everything you need to know about the LoveConnect experience.</p>
+          <h2 className="text-3xl md:text-5xl font-serif italic mb-6">{t('faq.title')}</h2>
+          <p className="text-gray-400">{t('faq.subtitle')}</p>
         </motion.div>
 
         <div className="space-y-12">
@@ -121,9 +102,9 @@ export default function FAQ() {
           transition={{ delay: 0.6 }}
           className="mt-16 text-center p-8 glass rounded-3xl"
         >
-          <p className="text-gray-400 text-sm italic">Still have questions? Feel free to reach out to us!</p>
+          <p className="text-gray-400 text-sm italic">{t('faq.stillQuestions')}</p>
           <a href="/contact" className="mt-4 inline-block text-brand-pink font-bold border-b border-brand-pink/30 hover:border-brand-pink transition-all pb-1">
-            Contact Support
+            {t('faq.contactSupport')}
           </a>
         </motion.div>
       </div>
